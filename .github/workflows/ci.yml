@@ -1,0 +1,68 @@
+name: Verify and publish demo
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Types, domain tests, build and browser scenarios
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@10.34.9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm verify
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm test:e2e
+      - name: Render Kubernetes resources without accessing a cluster
+        run: kubectl kustomize infra/k8s > /tmp/rejestry-vat-manifest.yaml
+      - name: Build the portable runtime image
+        run: docker build --tag rejestry-vat:ci .
+      - name: Smoke test the non-root read-only image
+        run: |
+          docker run --detach --name vat-smoke --read-only --tmpfs /tmp:rw,noexec,nosuid,size=32m -p 127.0.0.1:3102:3000 rejestry-vat:ci
+          trap 'docker rm --force vat-smoke >/dev/null' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3102/healthz; then exit 0; fi
+            sleep 1
+          done
+          docker logs vat-smoke
+          exit 1
+
+  deploy:
+    name: Vercel production (when configured)
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.VERCEL_CD_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@10.34.9 vercel@65.16.0
+      - name: Check deployment credentials
+        run: test -n "$VERCEL_TOKEN" && test -n "$VERCEL_ORG_ID" && test -n "$VERCEL_PROJECT_ID"
+      - run: vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - run: vercel build --prod --token="$VERCEL_TOKEN"
+      - run: vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN" > /tmp/deployment-url.txt

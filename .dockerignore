@@ -1,0 +1,13 @@
+# The image is built from the sources and their configuration only.
+*
+!src
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!next.config.ts
+!next-env.d.ts
+!tsconfig.json
+!tailwind.config.ts
+!postcss.config.mjs
+**/*.test.ts
+**/.DS_Store

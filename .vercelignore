@@ -1,0 +1,20 @@
+# Upload only what the build reads.
+/*
+!/src
+!/scripts
+!/package.json
+!/pnpm-lock.yaml
+!/pnpm-workspace.yaml
+!/next.config.ts
+!/next-env.d.ts
+!/tsconfig.json
+!/tailwind.config.ts
+!/postcss.config.mjs
+!/vitest.config.ts
+!/eslint.config.mjs
+!/vercel.json
+!/.nvmrc
+!/.gitignore
+!/.prettierignore
+!/.prettierrc.json
+.DS_Store
