@@ -24,10 +24,20 @@ interface AxisDragOptions {
   onCommit: (next: Span, kind: DragKind) => void;
 }
 
+/** A light tick under the finger where the device can give one (not iOS Safari). */
+function tick(ms: number) {
+  try {
+    navigator.vibrate?.(ms);
+  } catch {
+    // Vibration is a nicety; a blocked one changes nothing.
+  }
+}
+
 /**
- * Pointer drag on the month strip (mouse and pen; touch keeps scrolling the strip).
- * Pressing inside the highlight moves it, keeping its length; pressing elsewhere draws
- * a range; grabbing an edge of the highlight resizes it.
+ * Pointer drag on the month strip. Mouse and pen: pressing inside the highlight moves
+ * it, keeping its length; pressing elsewhere draws a range; grabbing an edge of the
+ * highlight resizes it. Touch keeps scrolling the strip, except on a range's edge
+ * handle, which a finger takes and drags.
  */
 export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOptions) {
   const drag = useRef<Drag | null>(null);
@@ -35,6 +45,8 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
   // The latest preview is read on pointer up, which can arrive before React renders.
   const latestPreview = useRef<Span | null>(null);
   const [onEdge, setOnEdge] = useState(false);
+  // A finger holds an edge handle: shown at once, before it moves.
+  const [grabbed, setGrabbed] = useState(false);
   const suppressClick = useRef(false);
   const setPreview = (next: Span | null) => {
     latestPreview.current = next;
@@ -60,7 +72,23 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
   }
 
   function onPointerDown(event: PointerEvent<HTMLElement>) {
-    if (event.pointerType === 'touch' || event.button !== 0) return;
+    if (event.button !== 0) return;
+    const handle = (event.target as HTMLElement).closest<HTMLElement>('[data-handle]');
+    if (event.pointerType === 'touch') {
+      if (!handle || !committed || !movable) return;
+      const start = handle.dataset.handle === 'start';
+      drag.current = {
+        kind: 'draw',
+        origin: start ? committed.start + committed.span - 1 : committed.start,
+        x: event.clientX,
+        moved: true,
+        pointer: event.pointerId,
+      };
+      event.currentTarget.setPointerCapture(event.pointerId);
+      setGrabbed(true);
+      tick(10);
+      return;
+    }
     const at = monthAt(event);
     const edge = edgeAt(event);
     const inside = committed && at >= committed.start && at < committed.start + committed.span;
@@ -100,7 +128,14 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
       event.currentTarget.setPointerCapture(event.pointerId);
     }
     if (current.kind === 'draw') {
-      setPreview({ start: Math.min(current.origin, at), span: Math.abs(at - current.origin) + 1 });
+      const next = { start: Math.min(current.origin, at), span: Math.abs(at - current.origin) + 1 };
+      const last = latestPreview.current;
+      if (
+        event.pointerType === 'touch' &&
+        (!last || last.start !== next.start || last.span !== next.span)
+      )
+        tick(4);
+      setPreview(next);
       return;
     }
     const base = committed!;
@@ -115,6 +150,7 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
     const current = drag.current;
     if (!current || current.pointer !== event.pointerId) return;
     drag.current = null;
+    setGrabbed(false);
     const next = latestPreview.current;
     const unchanged =
       next && committed && next.start === committed.start && next.span === committed.span;
@@ -135,6 +171,7 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
   return {
     preview,
     onEdge,
+    grabbed,
     handlers: {
       onPointerDown,
       onPointerMove,
@@ -142,6 +179,7 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
       onPointerLeave: () => setOnEdge(false),
       onPointerCancel: () => {
         drag.current = null;
+        setGrabbed(false);
         setPreview(null);
       },
       onClickCapture,

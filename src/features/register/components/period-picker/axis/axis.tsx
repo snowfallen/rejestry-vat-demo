@@ -84,7 +84,7 @@ export function Axis({
     const span = Math.min(next.span, open - next.start);
     onChange(spanToPeriod({ start: next.start, span }, how, period, year));
   };
-  const { preview, onEdge, handlers } = useAxisDrag({
+  const { preview, onEdge, grabbed, handlers } = useAxisDrag({
     committed,
     movable,
     step: period.mode === 'quarter' ? 3 : 1,
@@ -250,7 +250,7 @@ export function Axis({
       )}
       data-axis=""
       data-mode={period.mode}
-      data-dragging={preview ? '' : undefined}
+      data-dragging={preview || grabbed ? '' : undefined}
       style={cssVars({
         '--rise': `${desk.rise}px`,
         '--fall': `${desk.fall}px`,
@@ -297,8 +297,16 @@ export function Axis({
             )}
             {movable && (
               <>
-                <span className={cx(l.handle, l.handleStart)} title={axisCopy.resize} />
-                <span className={cx(l.handle, l.handleEnd)} title={axisCopy.resize} />
+                <span
+                  className={cx(l.handle, l.handleStart)}
+                  data-handle="start"
+                  title={axisCopy.resize}
+                />
+                <span
+                  className={cx(l.handle, l.handleEnd)}
+                  data-handle="end"
+                  title={axisCopy.resize}
+                />
               </>
             )}
           </span>

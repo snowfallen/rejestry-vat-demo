@@ -112,6 +112,24 @@
 [data-dragging] .handle {
   opacity: 1;
 }
+/* A finger takes a range's edge: a finger-sized grip around the thin handle, which
+   swells while held. Elsewhere the strip keeps scrolling under the finger. */
+@media (pointer: coarse) {
+  [data-mode='range'] .handle {
+    touch-action: none;
+    transition:
+      opacity var(--dur-1) ease-out,
+      transform var(--dur-1) var(--ease-out);
+  }
+  [data-mode='range'] .handle::before {
+    content: '';
+    position: absolute;
+    inset: -20px -14px;
+  }
+  [data-mode='range'][data-dragging] .handle {
+    transform: scale(1.7, 1.6);
+  }
+}
 @media (hover: hover) and (pointer: fine) {
   [data-axis]:hover .handle,
   [data-axis]:focus-within .handle {

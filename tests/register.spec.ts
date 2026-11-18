@@ -424,6 +424,43 @@ test(
   },
 );
 
+test('a finger drags the edge of a range on the phone', { tag: '@phone' }, async ({ page }) => {
+  const period = page.getByRole('region', { name: 'Okres rozliczeniowy' });
+  await period.getByRole('radio', { name: 'Zakres' }).click();
+  const handle = period.locator('[data-handle="start"]');
+  await expect(handle).toBeVisible();
+  const strip = (await period
+    .locator('[data-handle]')
+    .first()
+    .evaluate((el) => {
+      const box = el.closest('[role]')!.getBoundingClientRect();
+      return { x: box.x, y: box.y + box.height / 2, width: box.width };
+    }))!;
+  // Emulated touch: pointer events of type touch, as a finger on the handle sends them.
+  await page.evaluate(({ x, y, width }) => {
+    Element.prototype.setPointerCapture = () => {};
+    const handle = document.querySelector('[data-handle="start"]')!;
+    const strip = handle.closest('[role]')!;
+    const column = width / 12;
+    const fire = (target: Element, type: string, month: number) =>
+      target.dispatchEvent(
+        new PointerEvent(type, {
+          bubbles: true,
+          pointerType: 'touch',
+          pointerId: 7,
+          button: 0,
+          clientX: x + month * column,
+          clientY: y,
+        }),
+      );
+    fire(handle, 'pointerdown', 9);
+    fire(strip, 'pointermove', 8.5);
+    fire(strip, 'pointermove', 7.5);
+    fire(strip, 'pointerup', 7.5);
+  }, strip);
+  await expect(period).toContainText('Sierpień – październik 2026');
+});
+
 test('KSeF status views count and narrow the list', async ({ page, isMobile }) => {
   const views = page.getByRole('radiogroup', { name: 'Status KSeF' });
   const october = monthDocuments('sales', 10);

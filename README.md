@@ -91,7 +91,8 @@ becomes 3. The check is simulated, and the button says so.
 - Pick the settlement period on the month strip. Each bar is that month's VAT in the
   selected register. Switch between **Miesiąc**, **Kwartał**, **Rok** and **Zakres**;
   `‹ ›` step to the previous or next period across year boundaries. In **Zakres**,
-  click the first and last month on the strip or type exact dates.
+  click the first and last month on the strip or type exact dates; on a phone a
+  finger drags the range's edge handles (with a light tick where the device allows it).
 - Month and quarter show the JPK_V7M filing deadline; a quarter shows the nearest one
   still ahead (the 25th, moved past weekends and Polish public holidays).
 - Switch between the sales and purchase registers. Each tab carries its VAT, so both
