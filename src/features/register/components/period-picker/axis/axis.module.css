@@ -21,6 +21,8 @@
   position: relative;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
+  /* A held finger takes the highlight; no callout or loupe over it. */
+  -webkit-touch-callout: none;
 }
 .item {
   position: relative;

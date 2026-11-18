@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState, type MouseEvent, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 
 /** A run of months on the strip: 0-based start and length. */
 export type Span = { start: number; span: number };
@@ -45,8 +45,25 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
   // The latest preview is read on pointer up, which can arrive before React renders.
   const latestPreview = useRef<Span | null>(null);
   const [onEdge, setOnEdge] = useState(false);
-  // A finger holds an edge handle: shown at once, before it moves.
+  // A finger holds an edge handle or the highlight: shown at once, before it moves.
   const [grabbed, setGrabbed] = useState(false);
+  // A finger resting on the highlight: after a short hold it takes it; moving first
+  // scrolls the strip as usual.
+  const hold = useRef<{ timer: ReturnType<typeof setTimeout>; x: number; pointer: number } | null>(
+    null,
+  );
+  const cancelHold = () => {
+    if (hold.current) clearTimeout(hold.current.timer);
+    hold.current = null;
+  };
+  // While a finger drags, the page must not scroll under it. Scrolling has not begun (the
+  // finger was held still), so the first move can still be refused.
+  useEffect(() => {
+    if (!grabbed) return;
+    const still = (event: TouchEvent) => event.preventDefault();
+    document.addEventListener('touchmove', still, { passive: false });
+    return () => document.removeEventListener('touchmove', still);
+  }, [grabbed]);
   const suppressClick = useRef(false);
   const setPreview = (next: Span | null) => {
     latestPreview.current = next;
@@ -75,7 +92,29 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
     if (event.button !== 0) return;
     const handle = (event.target as HTMLElement).closest<HTMLElement>('[data-handle]');
     if (event.pointerType === 'touch') {
-      if (!handle || !committed || !movable) return;
+      if (!committed || !movable) return;
+      if (!handle) {
+        const at = monthAt(event);
+        if (at < committed.start || at >= committed.start + committed.span) return;
+        const strip = event.currentTarget;
+        const { clientX: x, pointerId: pointer } = event;
+        hold.current = {
+          x,
+          pointer,
+          timer: setTimeout(() => {
+            hold.current = null;
+            drag.current = { kind: 'move', origin: at, x, moved: true, pointer };
+            try {
+              strip.setPointerCapture(pointer);
+            } catch {
+              // The finger has already left; the drag simply ends with it.
+            }
+            setGrabbed(true);
+            tick(10);
+          }, 280),
+        };
+        return;
+      }
       const start = handle.dataset.handle === 'start';
       drag.current = {
         kind: 'draw',
@@ -112,6 +151,7 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
 
   function onPointerMove(event: PointerEvent<HTMLElement>) {
     const current = drag.current;
+    if (hold.current && Math.abs(event.clientX - hold.current.x) > 8) cancelHold();
     if (!current) {
       if (event.pointerType !== 'touch') {
         const near = edgeAt(event) !== null;
@@ -140,16 +180,21 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
     }
     const base = committed!;
     const delta = Math.round((at - current.origin) / step) * step;
-    setPreview({
+    const next = {
       start: Math.max(0, Math.min(12 - base.span, base.start + delta)),
       span: base.span,
-    });
+    };
+    if (event.pointerType === 'touch' && latestPreview.current?.start !== next.start) tick(4);
+    setPreview(next);
   }
 
   function onPointerUp(event: PointerEvent<HTMLElement>) {
+    cancelHold();
     const current = drag.current;
     if (!current || current.pointer !== event.pointerId) return;
     drag.current = null;
+    // A held finger never also taps the month under it.
+    if (event.pointerType === 'touch') suppressClick.current = true;
     setGrabbed(false);
     const next = latestPreview.current;
     const unchanged =
@@ -178,6 +223,7 @@ export function useAxisDrag({ committed, movable, step, onCommit }: AxisDragOpti
       onPointerUp,
       onPointerLeave: () => setOnEdge(false),
       onPointerCancel: () => {
+        cancelHold();
         drag.current = null;
         setGrabbed(false);
         setPreview(null);

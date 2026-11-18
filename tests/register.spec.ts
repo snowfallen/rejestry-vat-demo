@@ -461,6 +461,48 @@ test('a finger drags the edge of a range on the phone', { tag: '@phone' }, async
   await expect(period).toContainText('Sierpień – październik 2026');
 });
 
+test(
+  'a held finger moves the highlighted period on the phone',
+  { tag: '@phone' },
+  async ({ page }) => {
+    const period = page.getByRole('region', { name: 'Okres rozliczeniowy' });
+    const fire = (type: string, month: number) =>
+      page.evaluate(
+        ({ type, month }) => {
+          Element.prototype.setPointerCapture = () => {};
+          const strip = document.querySelector('[data-highlight]')!.parentElement!;
+          const box = strip.getBoundingClientRect();
+          const target =
+            type === 'pointerdown'
+              ? (document.elementFromPoint(
+                  box.x + (month + 0.5) * (box.width / 12),
+                  box.y + box.height / 2,
+                ) ?? strip)
+              : strip;
+          target.dispatchEvent(
+            new PointerEvent(type, {
+              bubbles: true,
+              pointerType: 'touch',
+              pointerId: 9,
+              button: 0,
+              clientX: box.x + (month + 0.5) * (box.width / 12),
+              clientY: box.y + box.height / 2,
+            }),
+          );
+        },
+        { type, month },
+      );
+    await period.getByRole('radio', { name: /^Październik 2026/ }).scrollIntoViewIfNeeded();
+    // Held still for a moment, the finger takes the highlight and carries it.
+    await fire('pointerdown', 9);
+    await page.waitForTimeout(450);
+    await fire('pointermove', 8);
+    await fire('pointermove', 7);
+    await fire('pointerup', 7);
+    await expect(period).toContainText('Sierpień 2026');
+  },
+);
+
 test('KSeF status views count and narrow the list', async ({ page, isMobile }) => {
   const views = page.getByRole('radiogroup', { name: 'Status KSeF' });
   const october = monthDocuments('sales', 10);
