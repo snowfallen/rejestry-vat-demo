@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://DEMO_URL/"><b>Open the live demo →</b></a>
+  <a href="https://rejestry-vat-demo.vercel.app/"><b>Open the live demo →</b></a>
   &nbsp;·&nbsp;
   <a href="docs/REQUIREMENTS.md">Every original field and action</a>
   &nbsp;·&nbsp;
@@ -37,11 +37,11 @@
 
 ## Try it in two minutes
 
-- [The register, October 2026](https://DEMO_URL/) — the reference month.
-- [Empty register](https://DEMO_URL/?state=empty) and [failed load](https://DEMO_URL/?state=error)
+- [The register, October 2026](https://rejestry-vat-demo.vercel.app/) — the reference month.
+- [Empty register](https://rejestry-vat-demo.vercel.app/?state=empty) and [failed load](https://rejestry-vat-demo.vercel.app/?state=error)
   — the other two data states, straight from the address.
-- [A quarter](https://DEMO_URL/?period=2026-Q4) and
-  [the purchase register](https://DEMO_URL/?register=purchases).
+- [A quarter](https://rejestry-vat-demo.vercel.app/?period=2026-Q4) and
+  [the purchase register](https://rejestry-vat-demo.vercel.app/?register=purchases).
 - Narrow the window down to a phone, or open the demo on one: the period becomes the
   screen's hero and documents open as sheets.
 
