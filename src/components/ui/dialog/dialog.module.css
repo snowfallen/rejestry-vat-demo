@@ -1,0 +1,81 @@
+.dialog {
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 24px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-dialog);
+  animation: dialogIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dialog:focus {
+  outline: none;
+}
+.dialog::backdrop {
+  background: var(--scrim);
+  animation: fadeIn 200ms ease-out;
+}
+
+/* Bottom sheet: anchored to the lower edge, full width, slides up. */
+.sheet {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: none;
+  max-height: calc(100dvh - 24px);
+  margin: 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  animation-name: sheetIn;
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sheet::backdrop {
+  background: var(--scrim);
+}
+/* The top of a sheet is its grip: a handle, and room to drag it down. */
+.grip {
+  position: relative;
+  margin-top: -6px;
+  padding-top: 14px;
+  touch-action: none;
+  cursor: grab;
+}
+.handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 40px;
+  height: 5px;
+  margin-left: -20px;
+  border-radius: 3px;
+  background: var(--control-line);
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+}
+@keyframes sheetIn {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .dialog:not(.sheet) {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 32px);
+    padding: 20px;
+  }
+}

@@ -1,0 +1,43 @@
+/* Buttons that act on the same list, drawn as one shape: shared edges, outer corners
+   only. The faces are the group's direct buttons, or the first button of a wrapper that
+   anchors a popover (a filter panel, a <details> menu). Phones keep separate buttons. */
+.group {
+  display: contents;
+}
+@media (min-width: 761px) {
+  .group {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .group > :not(:first-child) {
+    margin-left: -1px;
+  }
+  /* One height for every face: an icon button is 40px on its own, a text button 42px,
+     and in one shape that difference would show as a step. */
+  .group > button,
+  .group > * > button:first-of-type,
+  .group > * > summary {
+    box-sizing: border-box;
+    height: 42px;
+    min-height: 42px;
+  }
+  .group > button:not(:first-child),
+  .group > :not(:first-child) > button:first-of-type,
+  .group > :not(:first-child) > summary {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .group > button:not(:last-child),
+  .group > :not(:last-child) > button:first-of-type,
+  .group > :not(:last-child) > summary {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .group button:hover,
+  .group summary:hover,
+  .group :focus-visible,
+  .group [aria-expanded='true'] {
+    position: relative;
+    z-index: 1;
+  }
+}

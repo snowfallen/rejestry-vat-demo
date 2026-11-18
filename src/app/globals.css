@@ -1,0 +1,536 @@
+@tailwind base;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  /* Fluid spacing: the page breathes continuously from 320px to wide desktop
+     instead of stepping at breakpoints. */
+  --gutter: clamp(12px, 2.4vw + 6px, 40px);
+  --inset: clamp(12px, 1.6vw + 8px, 24px);
+  --canvas: #f6f7fb;
+  --surface: #ffffff;
+  --surface-subtle: #f8fafb;
+  --ink: #17262e;
+  --ink-soft: #435762;
+  --muted: #5d6e79;
+  --faint: #697985;
+  --line: #e2e8eb;
+  --control-line: #cbd5db;
+  --control-hover: #9aafb9;
+  --accent: #167873;
+  --accent-hover: #105e5b;
+  --accent-soft: #eaf5f3;
+  --accent-soft-hover: #dbeee9;
+  --accent-line: #b9d8d3;
+  --on-accent: #ffffff;
+  --warning: #79591c;
+  --warning-bg: #fff9eb;
+  --warning-line: #e7d9b8;
+  --pending: #d4a64a;
+  --mark: #fbe7a8;
+  --danger: #b14442;
+  --danger-soft: #fff2f0;
+  --focus: #0d7771;
+  --track: #eceff6;
+  --track-hover: #e2e6ef;
+  --bar: #c6dfda;
+  --bar-hover: #9fcac2;
+  --bar-muted: #dfe5e8;
+  --bar-other: #bfcbd1;
+  --rate-accent: #5fb3a8;
+  --rate-muted: #9fb2bb;
+  --row-hover: #fafcfc;
+  --row-open: #f3f9f7;
+  --row-line: #e9eef0;
+  --skeleton: #eef1f3;
+  --scroll-shade: rgb(23 38 46 / 0.14);
+  --skeleton-hi: #f7f9fa;
+  --scroll-thumb: #adc8c3;
+  --scroll-track: #f5f8f8;
+  --selection: #cce9e4;
+  --selection-ink: #103e3c;
+  --scrim: #142a3859;
+  --toast-bg: #173d39;
+  --toast-ink: #f2fbf9;
+  --toast-icon: #b7ddd4;
+  --shadow-dialog: 0 20px 80px #172c3040;
+  --shadow-thumb: 0 1px 2px #17262e14, 0 0 0 1px #17262e0a;
+  --shadow-paper: 0 10px 24px -14px #17262e30;
+  --shadow-lift: 0 6px 16px #16787322;
+  /* The period hero on phones: deep teal, light text. */
+  --hero-from: #13706b;
+  --hero-to: #0b4f4b;
+  --hero-glow: #2aa39a40;
+  /* The theme picker's two pictures keep their own colours in either theme. */
+  --preview-light-canvas: #f1f2f8;
+  --preview-light-paper: #ffffff;
+  --preview-light-ink: #17262e;
+  --preview-dark-canvas: #0f141b;
+  --preview-dark-paper: #1a2128;
+  --preview-dark-ink: #e9eef2;
+  /* The hero card's surface; built from the colours above, so it follows the theme. */
+  --hero-bg:
+    radial-gradient(120% 90% at 100% 0%, var(--hero-glow), transparent 62%),
+    linear-gradient(160deg, var(--hero-from), var(--hero-to));
+  --hero-ink: #ffffff;
+  --hero-muted: #e2f2ef;
+  --shadow-hero: 0 14px 34px -12px #0b4f4b80;
+  --shadow-toast: 0 6px 24px #153d3926;
+  /* VAT axis: due (to pay), offset (covered by input VAT), input, surplus. */
+  --axis-due: var(--accent);
+  --axis-offset: color-mix(in oklab, var(--accent) 24%, var(--surface));
+  --axis-input: var(--bar-other);
+  --axis-surplus: var(--pending);
+  /* Elevation: 1 resting, 2 popovers and menus, 3 sheets rising from the bottom. */
+  --shadow-1: 0 1px 2px rgb(23 38 46 / 0.06);
+  --shadow-2: 0 12px 32px -12px rgb(23 38 46 / 0.18), 0 0 0 1px var(--line);
+  --shadow-3: 0 -8px 40px -12px rgb(23 38 46 / 0.22);
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-1: 160ms;
+  --dur-2: 240ms;
+  --dur-3: 320ms;
+  --dur-4: 460ms;
+  /* Layers */
+  --z-raised: 1;
+  --z-sticky: 20;
+  --z-header: 30;
+  --z-popover: 40;
+  --z-sheet: 50;
+  --z-toast: 60;
+  /* The skip link must cover everything, a toast included. */
+  --z-skip: 70;
+  --header-h: 72px;
+  --font: 'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+/* Dark theme: the same identity at night. The lavender canvas becomes deep slate
+   blue, surfaces lift in small steps and the teal accent brightens to keep contrast. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --canvas: #0f141b;
+  --surface: #161d25;
+  --surface-subtle: #1a222b;
+  --ink: #e7edf1;
+  --ink-soft: #c2ced5;
+  --muted: #9aa9b3;
+  --faint: #93a2ac;
+  --line: #27313c;
+  --control-line: #36424e;
+  --control-hover: #4f5e6b;
+  --accent: #46b8ac;
+  --accent-hover: #63cabf;
+  --accent-soft: #15302f;
+  --accent-soft-hover: #1b3d3b;
+  --accent-line: #275652;
+  --on-accent: #06201d;
+  --warning: #e6c47e;
+  --warning-bg: #282216;
+  --warning-line: #4a3e25;
+  --pending: #d9ad55;
+  --mark: #5b4a1c;
+  --danger: #f08d87;
+  --danger-soft: #36201f;
+  --focus: #63cabf;
+  --track: #1d2530;
+  --track-hover: #25303c;
+  --bar: #2a4d4a;
+  --bar-hover: #3b6b66;
+  --bar-muted: #27313c;
+  --bar-other: #3d4a56;
+  --rate-accent: #3f9c92;
+  --rate-muted: #5d6e79;
+  --row-hover: #1a222b;
+  --row-open: #182a2b;
+  --row-line: #232c36;
+  --skeleton: #222b35;
+  --scroll-shade: rgb(0 0 0 / 0.45);
+  --skeleton-hi: #2b3540;
+  --scroll-thumb: #36504d;
+  --scroll-track: #161d25;
+  --selection: #275652;
+  --selection-ink: #e7edf1;
+  --scrim: #04080ccc;
+  --toast-bg: #e7edf1;
+  --toast-ink: #0f141b;
+  --toast-icon: #167873;
+  --shadow-dialog: 0 0 0 1px #ffffff12, 0 20px 80px #000000a0;
+  --shadow-thumb: 0 1px 2px #00000060, 0 0 0 1px #ffffff10;
+  --shadow-paper: 0 0 0 1px #ffffff08, 0 12px 28px -14px #000000a0;
+  --shadow-lift: 0 6px 16px #00000070;
+  --hero-from: #17504c;
+  --hero-to: #0f3533;
+  --hero-glow: #46b8ac40;
+  --hero-ink: #ffffff;
+  --hero-muted: #cfe5e1;
+  --shadow-hero: 0 14px 34px -14px #000000a0;
+  --shadow-toast: 0 6px 24px #00000080;
+  --axis-offset: color-mix(in oklab, var(--accent) 60%, var(--surface));
+  --axis-input: color-mix(in oklab, var(--muted) 60%, var(--surface));
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 14px 36px -12px rgb(0 0 0 / 0.6), 0 0 0 1px var(--line);
+  --shadow-3: 0 -8px 40px -12px rgb(0 0 0 / 0.7);
+}
+@media (max-width: 760px) {
+  :root {
+    --header-h: 56px;
+    /* Room the page keeps free under its content for the phone tab bar. */
+    --tab-bar-room: calc(88px + env(safe-area-inset-bottom));
+  }
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  min-width: 280px;
+  background: var(--canvas);
+  /* Anchors (the skip link, a focused field) land below the sticky header, and above
+     the phone's tab bar (\`--tab-bar-room\` exists on phones only). */
+  scroll-padding-top: calc(var(--header-h) + 16px);
+  scroll-padding-bottom: var(--tab-bar-room, 0px);
+}
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 14px/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+summary,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+summary {
+  cursor: pointer;
+}
+button {
+  color: inherit;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+input,
+select,
+textarea {
+  min-width: 0;
+  color: var(--ink);
+  accent-color: var(--accent);
+  caret-color: var(--accent);
+}
+input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+input[type='search']::-webkit-search-cancel-button {
+  display: none;
+}
+input,
+select {
+  border: 1px solid var(--control-line);
+  border-radius: 7px;
+  background: var(--surface);
+  min-height: 42px;
+  padding: 9px 12px;
+}
+select {
+  cursor: pointer;
+}
+input:focus,
+select:focus {
+  border-color: var(--accent);
+}
+button:disabled {
+  opacity: 0.42;
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+button,
+a,
+input,
+select,
+summary,
+textarea {
+  outline-offset: 3px;
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+}
+::selection {
+  background: var(--selection);
+  color: var(--selection-ink);
+}
+svg {
+  flex-shrink: 0;
+  vertical-align: middle;
+  stroke-width: 1.7;
+}
+button,
+a,
+summary {
+  touch-action: manipulation;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: var(--z-skip);
+  background: var(--ink);
+  color: var(--surface);
+  padding: 12px 18px;
+  border-radius: 6px;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.skip-link:focus {
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+.fallback {
+  max-width: 600px;
+  margin: 15vh auto;
+  padding: 24px;
+}
+.fallback button {
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 18px;
+}
+/* Filter and period changes: documents that stay glide to their new place,
+   leaving ones fade out, arriving ones fade in. */
+::view-transition-group(*) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 200ms;
+}
+::view-transition-old(*):only-child {
+  animation: 120ms ease-in both vtLeave;
+}
+::view-transition-new(*):only-child {
+  animation: 280ms cubic-bezier(0.2, 0.8, 0.2, 1) 80ms both vtEnter;
+}
+/* Panels that stay on screen show their new state at once and keep covering the
+   moving documents; only their position animates. */
+::view-transition-group(filter-popover) {
+  z-index: var(--z-raised);
+}
+::view-transition-old(filter-popover) {
+  display: none;
+}
+::view-transition-new(filter-popover) {
+  animation: none;
+}
+@keyframes periodIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* Theme switch: the new theme spreads in a circle from the toggle. */
+.theme-switch::view-transition-old(root) {
+  animation: none;
+}
+.theme-switch::view-transition-new(root) {
+  animation: themeReveal 560ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes themeReveal {
+  from {
+    clip-path: circle(0 at var(--reveal-x) var(--reveal-y));
+  }
+  to {
+    clip-path: circle(150vmax at var(--reveal-x) var(--reveal-y));
+  }
+}
+@keyframes vtLeave {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+@keyframes vtEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* Shared entrance motions referenced by Tailwind arbitrary animations. */
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+/* A state panel (empty, error) settling in: moved, never faded, so its text keeps
+   full contrast from the first frame. */
+@keyframes stateIn {
+  from {
+    transform: translateY(6px);
+  }
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes toastTime {
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes pulse {
+  to {
+    opacity: 0.4;
+  }
+}
+
+/* Entrance, once per session: the title settles, the period card opens, the register
+   sheet rises and the first rows follow. Transforms and clip-path only; text never
+   fades, and everything is clickable from the first frame. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-intro] [data-intro-part='title'] {
+    animation: introRise var(--dur-2) var(--ease-out) backwards;
+  }
+  html[data-intro] [data-intro-part='period'] {
+    animation:
+      introRise var(--dur-3) var(--ease-out) backwards,
+      introReveal var(--dur-3) var(--ease-out) backwards;
+    animation-delay: 80ms;
+  }
+  html[data-intro] [data-intro-part='sheet'] {
+    --intro-y: 16px;
+    animation:
+      introRise var(--dur-3) var(--ease-out) backwards,
+      introReveal var(--dur-3) var(--ease-out) backwards;
+    animation-delay: 300ms;
+  }
+  html[data-intro] [data-intro-row] {
+    --intro-y: 6px;
+    animation: introRise var(--dur-2) var(--ease-out) backwards;
+    animation-delay: calc(420ms + var(--row) * 25ms);
+  }
+}
+@keyframes introRise {
+  from {
+    transform: translateY(var(--intro-y, 8px));
+  }
+}
+@keyframes introReveal {
+  from {
+    clip-path: inset(0 0 100% 0 round 16px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 16px);
+  }
+}
+
+/* A notice that leads to documents lights them up once. */
+[data-flash] [data-pending] > td,
+[data-flash] article[data-pending] {
+  animation: rowFlash 600ms var(--ease-out);
+}
+/* A notice's target, lit once when the notice is chosen. */
+[data-noticed] {
+  border-radius: 6px;
+  animation: noticed 1s var(--ease-out);
+}
+@keyframes noticed {
+  0%,
+  40% {
+    background-color: var(--accent-soft);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+}
+@keyframes rowFlash {
+  from {
+    background-color: color-mix(in oklab, var(--pending) 18%, var(--surface));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-flash] [data-pending] > td,
+  [data-flash] article[data-pending],
+  [data-noticed] {
+    animation: none;
+  }
+}
+
+/* Moving between accounting areas: the content slides toward the chosen tab's side. */
+::view-transition-old(area),
+::view-transition-new(area) {
+  animation-duration: var(--dur-2);
+  animation-timing-function: var(--ease-out);
+}
+html[data-area-direction='forward']::view-transition-old(area) {
+  animation-name: areaOutLeft;
+}
+html[data-area-direction='forward']::view-transition-new(area) {
+  animation-name: areaInRight;
+}
+html[data-area-direction='back']::view-transition-old(area) {
+  animation-name: areaOutRight;
+}
+html[data-area-direction='back']::view-transition-new(area) {
+  animation-name: areaInLeft;
+}
+@keyframes areaOutLeft {
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+@keyframes areaInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+@keyframes areaOutRight {
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+@keyframes areaInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
