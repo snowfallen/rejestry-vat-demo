@@ -1,0 +1,88 @@
+/* The register sheet. The header is a lavender track; one white tab slides between
+   the registers and, with two concave corners, flows into the documents panel. The
+   tabs live inside the sheet's border, so no outer corner can step or notch. */
+.sheet {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.header {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 15px 15px 0 0;
+  background: var(--track);
+}
+.panel {
+  position: relative;
+}
+.loading {
+  color: transparent !important;
+  border-radius: 6px;
+  background: linear-gradient(
+      90deg,
+      var(--skeleton) 25%,
+      var(--skeleton-hi) 50%,
+      var(--skeleton) 75%
+    )
+    0 0 / 200% 100%;
+  animation: shimmer 1.1s linear infinite;
+}
+@media (max-width: 760px) {
+  /* Phones keep the registers in reach while the list scrolls: the tabs stick under
+     the page header, and only their top line (the document count) slides beneath it,
+     leaving each register's name and VAT. The search row sticks below them. */
+  .sheet {
+    --tabs-hidden: 24px;
+    --tabs-visible: 58px;
+    /* Edge to edge, like the opened document's sheet: on a phone side margins only
+       narrow the list. The page gutter and the sheet's inset are equal here, so the
+       content stays in line with the title above. */
+    margin-inline: calc(-1 * var(--gutter));
+    /* …and down to the page's end: the room kept for the tab bar is the sheet's own,
+       so no strip of canvas shows under the list. */
+    margin-bottom: calc(-1 * var(--tab-bar-room));
+    padding-bottom: var(--tab-bar-room);
+    border: 0;
+    /* Square: a sheet that spans the screen has no corners of its own. */
+    border-radius: 0;
+    box-shadow: 0 -1px 0 var(--line);
+  }
+  .header {
+    position: sticky;
+    /* Above the toolbar that sticks under it. */
+    z-index: calc(var(--z-sticky) + 1);
+    top: calc(var(--header-h) - var(--tabs-hidden));
+    border-radius: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading {
+    animation: none;
+  }
+}
+/* Phones, scrolled into the list: the tabs fold to one 40px line, name and VAT side by
+   side, and the search row slides up under them while the list scrolls down. */
+@media (max-width: 760px) {
+  .sheet[data-compact] {
+    --tabs-visible: 40px;
+  }
+  .sheet [data-toolbar] {
+    transition: transform var(--dur-2) var(--ease-out);
+  }
+  .sheet[data-tools-hidden] [data-toolbar] {
+    transform: translateY(-100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet [data-toolbar] {
+    transition: none;
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}

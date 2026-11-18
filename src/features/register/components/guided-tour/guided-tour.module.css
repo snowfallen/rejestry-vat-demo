@@ -1,0 +1,170 @@
+/* The guided tour. A clear window (the spotlight) moves over the dimmed screen from
+   part to part; its giant shadow is the dim. The card follows it. */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+}
+.blocker {
+  position: absolute;
+  inset: 0;
+}
+.spotlight {
+  position: fixed;
+  top: var(--top);
+  left: var(--left);
+  width: var(--width);
+  height: var(--height);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 2px var(--accent),
+    0 0 0 9999px var(--scrim);
+  pointer-events: none;
+  transition:
+    top 380ms var(--ease-out),
+    left 380ms var(--ease-out),
+    width 380ms var(--ease-out),
+    height 380ms var(--ease-out);
+  animation: dimIn 240ms ease-out;
+}
+.card {
+  position: fixed;
+  top: var(--card-top);
+  left: var(--card-left);
+  width: min(380px, calc(100vw - 32px));
+  padding: 16px 18px 14px;
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-2);
+  transition:
+    top 380ms var(--ease-out),
+    left 380ms var(--ease-out);
+  animation: cardIn 260ms var(--ease-out);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.count {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -6px -8px -6px 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+}
+.close:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.title {
+  margin: 4px 0 6px;
+  font-size: 17px;
+  font-weight: 640;
+  letter-spacing: -0.015em;
+}
+.text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.dots {
+  display: flex;
+  gap: 5px;
+  margin: 14px 0 12px;
+}
+.dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--control-line);
+  transition:
+    width 240ms var(--ease-out),
+    background-color 240ms ease-out;
+}
+.dots span[data-on] {
+  width: 18px;
+  background: var(--accent);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.skip,
+.back,
+.next {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 560;
+}
+.skip {
+  margin-right: auto;
+  padding-left: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.skip:hover {
+  color: var(--ink);
+}
+.back {
+  border: 1px solid var(--control-line);
+  background: var(--surface);
+  color: var(--ink);
+}
+.next {
+  min-width: 96px;
+  border: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.next:hover {
+  background: var(--accent-hover);
+}
+@media (max-width: 760px) {
+  .card {
+    width: calc(100vw - 24px);
+  }
+  .skip,
+  .back,
+  .next {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spotlight,
+  .card {
+    transition: none;
+    animation: none;
+  }
+}
+@keyframes dimIn {
+  from {
+    box-shadow:
+      0 0 0 2px transparent,
+      0 0 0 9999px transparent;
+  }
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}

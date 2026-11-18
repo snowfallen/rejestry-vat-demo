@@ -1,0 +1,120 @@
+.notes label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.notes label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.notes textarea {
+  width: 100%;
+  min-height: 38px;
+  padding: 9px 12px;
+  border: 1px solid var(--control-line);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+  resize: none;
+  field-sizing: content;
+}
+.notes textarea:focus {
+  border-color: var(--accent);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+/* The label as three choices: one press, visible state, no menu. */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tagChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--control-line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 550;
+}
+.tagChip:hover {
+  border-color: var(--control-hover);
+}
+.tagOn,
+.tagOn:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.tagDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.tagReview {
+  background: var(--pending);
+}
+.tagVerified {
+  background: var(--accent);
+}
+/* "Zapisano" rises in beside the label after a note is left. */
+.saved {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 550;
+  transform: translateY(4px);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.savedOn {
+  transform: none;
+}
+.optional {
+  color: var(--muted);
+  font-weight: 400;
+}
+/* Phones: the three labels as one grouped list, a full-width row each, the way a
+   phone's settings list reads; the chosen row is tinted. */
+@media (max-width: 760px) {
+  .tags {
+    display: grid;
+    gap: 0;
+    overflow: hidden;
+    border: 1px solid var(--control-line);
+    border-radius: 12px;
+  }
+  .tagChip {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 0;
+    font-size: 14px;
+  }
+  .tagChip + .tagChip {
+    border-top: 1px solid var(--line);
+  }
+  .notes textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .notes textarea::placeholder {
+    font-size: 13px;
+  }
+}

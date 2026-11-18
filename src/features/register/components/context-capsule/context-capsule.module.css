@@ -1,0 +1,207 @@
+/* One capsule, three segments. The capsule clips its segments to the pill; the VAT
+   context popover is positioned against `.root`, outside that clip. */
+.root {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+.capsule {
+  display: inline-flex;
+  align-items: stretch;
+  height: 36px;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 12px;
+}
+.year,
+.context summary,
+.demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 12px;
+  border: 0;
+  white-space: nowrap;
+  transition: background var(--dur-1) var(--ease-out);
+}
+.year:focus-visible,
+.context summary:focus-visible,
+.demo:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+/* End segments follow the pill, so their focus ring does too. */
+.year {
+  border-radius: 999px 0 0 999px;
+  padding-left: 14px;
+  background: transparent;
+  color: var(--ink);
+}
+.year:hover,
+.demo:hover {
+  background: var(--surface-subtle);
+}
+.year strong {
+  font-weight: 650;
+}
+.yearIcon {
+  color: var(--accent);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: var(--pending);
+}
+.status {
+  color: var(--muted);
+}
+.context {
+  border-left: 1px solid var(--line);
+}
+.context summary {
+  list-style: none;
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-weight: 550;
+  cursor: pointer;
+}
+.context summary::-webkit-details-marker {
+  display: none;
+}
+.context[open] summary {
+  background: color-mix(in oklab, var(--pending) 18%, var(--warning-bg));
+}
+.panel {
+  position: absolute;
+  z-index: var(--z-popover);
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(340px, calc(100vw - 24px));
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  animation: panelIn var(--dur-1) var(--ease-out);
+}
+.panel p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.demo {
+  border-radius: 0 999px 999px 0;
+  padding-right: 14px;
+  border-left: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+.demo:hover {
+  color: var(--accent);
+}
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* Demo-state menu: three radio rows, each with its picture of the axis. */
+.states {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.state {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 14px;
+  row-gap: 1px;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out);
+}
+.state:hover {
+  border-color: var(--control-hover);
+}
+.chosen,
+.chosen:hover {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.state:has(.radio:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+/* The native radio covers the whole card, so the card is the click target. */
+.radio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.state > svg {
+  grid-row: span 2;
+  width: 56px;
+  height: auto;
+}
+.stateLabel {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.stateHint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .year {
+    display: none;
+  }
+  .context {
+    border-left: 0;
+  }
+  .context summary {
+    border-radius: 999px 0 0 999px;
+    padding-left: 14px;
+  }
+  /* The capsule is centred on phones: so is its explanation, which keeps it on screen. */
+  .panel {
+    right: auto;
+    left: 50%;
+    margin-left: calc(min(340px, 100vw - 24px) / -2);
+  }
+  .state {
+    padding: 7px 10px;
+  }
+  .stateLabel {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+}

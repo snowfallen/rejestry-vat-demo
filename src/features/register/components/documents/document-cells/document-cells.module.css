@@ -1,0 +1,111 @@
+.lead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.contractor {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  color: var(--ink);
+  font-weight: 550;
+}
+.correction {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  font-size: 11px;
+  font-weight: 550;
+}
+.tag {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pending);
+}
+.tagVerified {
+  background: var(--accent);
+}
+.match {
+  margin: 0 -1px;
+  padding: 0 1px;
+  border-radius: 3px;
+  background: var(--mark);
+  color: inherit;
+}
+/* Hierarchy by tone, not by boxes: who and how much lead, the rest steps back. */
+.date {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.number {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.identifier {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+/* KSeF reads like the gross column: the status on top, the number below. */
+.ksef {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-width: 0;
+}
+.confirmed {
+  flex: none;
+  color: var(--muted);
+}
+.ksefNumber {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--warning);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pending > span {
+  width: 14px;
+  height: 14px;
+  border: 1.5px dashed var(--pending);
+  border-radius: 50%;
+}
+.amount {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.gross {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 570;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.negative {
+  color: var(--warning);
+}
+.parts {
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

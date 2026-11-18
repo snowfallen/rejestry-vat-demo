@@ -1,0 +1,134 @@
+/* Beside the sheet */
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 2px 0 0;
+  list-style: none;
+}
+/* The way through KSeF reads left to right: a mark, then the step and its date. */
+.steps li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 28px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.3;
+}
+/* The connector runs from a step's mark to the next one and fills once both are done. */
+.steps li::before,
+.steps li::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 26px;
+  right: -4px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line);
+}
+.steps li::after {
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.steps li:last-child::before,
+.steps li:last-child::after {
+  display: none;
+}
+.steps small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+.mono {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--control-line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--on-accent);
+}
+.done {
+  color: var(--ink) !important;
+}
+[data-open] .done .mark {
+  border-color: var(--accent);
+  background: var(--accent);
+  transition:
+    background 220ms ease-out,
+    border-color 220ms ease-out;
+  transition-delay: calc(300ms + var(--i) * 160ms);
+}
+[data-open] .done:has(+ .done)::after {
+  transform: none;
+  transition: transform 200ms ease-out;
+  transition-delay: calc(380ms + var(--i) * 160ms);
+}
+@media (max-width: 760px) {
+  .side {
+    display: flex;
+    gap: 18px;
+    padding: 4px 2px 2px;
+  }
+  /* Phones: the way runs down, one step a line, so the KSeF number and the check have
+     the whole width instead of a third of it. */
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .steps li {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 2px 12px;
+    min-height: 32px;
+    padding: 0 0 12px 30px;
+  }
+  .steps li:last-child {
+    min-height: 0;
+    padding-bottom: 0;
+  }
+  .steps li::before,
+  .steps li::after {
+    top: 22px;
+    bottom: 2px;
+    left: 8px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+  .steps li::after {
+    transform: scaleY(0);
+    transform-origin: 50% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-open] .done .mark,
+  .steps li::after {
+    transition: none;
+  }
+}

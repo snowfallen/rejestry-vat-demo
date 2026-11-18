@@ -1,0 +1,141 @@
+/* The KSeF seal. It settles in after the sheet; a confirmed seal draws its tick and
+   sends out one soft ring, a pending one keeps a quiet clock. */
+.seal {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 12px 6px 7px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px);
+}
+[data-open] .seal {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 220ms ease-out 280ms,
+    transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1) 280ms;
+}
+.sealLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+.sealDone {
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+.sealPending {
+  background: var(--warning-bg);
+  color: var(--warning);
+  box-shadow: inset 0 0 0 1px var(--warning-line);
+}
+.sealIcon {
+  width: 26px;
+  height: 26px;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sealRing {
+  stroke-width: 1.6;
+}
+.sealTick {
+  stroke-width: 2.2;
+  stroke-dasharray: 16;
+  stroke-dashoffset: 16;
+}
+[data-open] .sealTick {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 420ms cubic-bezier(0.65, 0, 0.35, 1) 480ms;
+}
+.sealHand {
+  stroke-width: 2;
+  transform-origin: 12px 12px;
+}
+[data-open] .sealHand {
+  animation: sealTurn 1.6s cubic-bezier(0.4, 0, 0.2, 1) 600ms 1;
+}
+/* One ring leaves the confirmed seal as the tick completes. */
+.sealDone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 var(--accent-line);
+  opacity: 0;
+}
+[data-open] .sealDone::after {
+  animation: sealRing 900ms ease-out 820ms 1 both;
+}
+@media (max-width: 760px) {
+  .seal {
+    padding: 5px 10px 5px 6px;
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seal,
+  [data-open] .seal,
+  [data-open] .sealTick {
+    transition: none;
+  }
+  .seal {
+    opacity: 1;
+    transform: none;
+  }
+  .sealTick {
+    stroke-dashoffset: 0;
+  }
+  [data-open] .sealHand,
+  [data-open] .sealDone::after {
+    animation: none;
+  }
+}
+/* Confirmed in the open sheet: the tick draws and the ring leaves once more. */
+[data-open] .sealFresh .sealTick {
+  animation: sealDraw 420ms cubic-bezier(0.65, 0, 0.35, 1) 80ms both;
+}
+[data-open] .sealFresh::after {
+  animation: sealRing 900ms ease-out 420ms 1 both;
+}
+@keyframes sealDraw {
+  from {
+    stroke-dashoffset: 16;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes sealTurn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes sealRing {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 var(--accent-line);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 10px var(--accent-line);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-open] .sealFresh .sealTick,
+  [data-open] .sealFresh::after {
+    animation: none;
+  }
+}

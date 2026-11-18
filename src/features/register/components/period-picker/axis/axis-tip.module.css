@@ -1,0 +1,43 @@
+/* Hovering a month: output, input and the result. */
+.tip {
+  position: absolute;
+  bottom: calc(100% - 14px);
+  left: 50%;
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition:
+    opacity var(--dur-1) ease-out,
+    transform var(--dur-1) ease-out;
+  pointer-events: none;
+}
+.tipTotal {
+  margin-top: 2px;
+  padding-top: 3px;
+  border-top: 1px solid rgb(255 255 255 / 0.2);
+  font-weight: 650;
+}
+@media (hover: hover) and (min-width: 761px) {
+  [data-cell]:hover .tip,
+  [data-item]:focus-visible .tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tip {
+    transition: none;
+  }
+}

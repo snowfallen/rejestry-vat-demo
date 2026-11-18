@@ -1,0 +1,305 @@
+/* The register table. Pinned cells need an opaque background that follows the row
+   state, so each row exposes it as --row-bg. */
+
+.scroller {
+  overflow-x: auto;
+  border-top: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+/* The table fits: no sideways scroll, so the headings stick under the page header. */
+.fits {
+  overflow-x: visible;
+}
+/* The head sticks as a whole, above the rows' pinned cells (raised) and the month
+   headings, which are their own layers (view-transition-name). */
+.fits .table thead {
+  position: sticky;
+  z-index: var(--z-sticky);
+  top: var(--header-h);
+}
+/* Separate borders: each cell carries its own line, so pinned cells and a sticky head
+   keep their borders in every engine (collapsed borders stay behind in Firefox). */
+.table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+.table th,
+.table td {
+  padding: 0 15px;
+  text-align: left;
+}
+.table thead th:first-child,
+.row > td:first-child {
+  padding-left: var(--inset);
+}
+
+.table thead th {
+  position: relative;
+  height: 40px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-subtle);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.sort:hover {
+  color: var(--ink);
+}
+.sort > svg {
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+.sort:hover > svg,
+[aria-sort='ascending'] .sort > svg,
+[aria-sort='descending'] .sort > svg {
+  opacity: 1;
+}
+[aria-sort='ascending'] .sort,
+[aria-sort='descending'] .sort {
+  color: var(--ink);
+}
+.resize {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 15px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--faint);
+  cursor: col-resize;
+  opacity: 0;
+  touch-action: none;
+  transition: opacity 150ms ease-out;
+}
+thead:hover .resize,
+.resize:focus-visible {
+  opacity: 0.7;
+}
+.resize:hover {
+  opacity: 1 !important;
+}
+
+/* Rows */
+.row {
+  --row-bg: var(--surface);
+  cursor: pointer;
+}
+.row:hover {
+  --row-bg: var(--row-hover);
+}
+.row.open {
+  --row-bg: var(--row-open);
+}
+/* Whole pixels: two lines of text come to 52.5px, and a border on a half pixel is
+   not drawn at all by Firefox at 1x. */
+.row > td {
+  height: 53px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--row-line);
+  background: var(--row-bg);
+  color: var(--ink-soft);
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+  transition: background 160ms ease-out;
+}
+.row.open > td {
+  border-bottom-color: transparent;
+}
+/* An opened document and its row read as one piece: a teal edge runs down both. */
+.row.open > td:first-child,
+.detailOpen > td {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.table td[data-col='gross'],
+.table th[data-col='gross'] {
+  text-align: right;
+}
+.table th[data-col='gross'] .sort {
+  /* The sort arrow goes before the name, so the name ends where the amounts end. */
+  flex-direction: row-reverse;
+  margin-left: auto;
+}
+
+/* Pinned: contractor on the left, gross and the toggle on the right. */
+.table thead th:first-child,
+.row > td:first-child,
+.table thead th:last-child,
+.row > td:last-child,
+.table thead th[data-col='gross']:nth-last-child(2),
+.row > td[data-col='gross']:nth-last-child(2) {
+  position: sticky;
+  z-index: var(--z-raised);
+}
+.table thead th:first-child,
+.row > td:first-child {
+  left: 0;
+}
+.table thead th:last-child,
+.row > td:last-child {
+  right: 0;
+  padding: 0 12px 0 6px;
+}
+.table thead th[data-col='gross']:nth-last-child(2),
+.row > td[data-col='gross']:nth-last-child(2) {
+  right: 96px;
+}
+/* Wider than its card (columns widened by hand): a soft shade beside a pinned column
+   says more runs under it, only on the side where something is hidden. */
+.scroller[data-hidden-start] .table thead th:first-child::after,
+.scroller[data-hidden-start] .row > td:first-child::after,
+.scroller[data-hidden-end] .table thead th[data-col='gross']:nth-last-child(2)::before,
+.scroller[data-hidden-end] .row > td[data-col='gross']:nth-last-child(2)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  pointer-events: none;
+}
+.scroller[data-hidden-start] .table thead th:first-child::after,
+.scroller[data-hidden-start] .row > td:first-child::after {
+  right: -12px;
+  background: linear-gradient(to right, var(--scroll-shade), transparent);
+}
+.scroller[data-hidden-end] .table thead th[data-col='gross']:nth-last-child(2)::before,
+.scroller[data-hidden-end] .row > td[data-col='gross']:nth-last-child(2)::before {
+  left: -12px;
+  background: linear-gradient(to left, var(--scroll-shade), transparent);
+}
+
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+}
+.toggle svg {
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.toggle:hover,
+.toggle[aria-expanded='true'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+/* Month heading inside quarter, year and range views. */
+.group > th {
+  height: 38px;
+  padding: 8px var(--inset);
+  border-bottom: 0;
+  background: var(--surface-subtle);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+}
+.group > th > button {
+  position: sticky;
+  left: 24px;
+}
+
+.detailRow > td {
+  height: 0;
+  padding: 0 !important;
+  border-bottom: 0;
+}
+.detailOpen > td {
+  border-bottom: 1px solid var(--line);
+}
+.table tbody > tr:last-child > td {
+  border-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .scroller {
+    display: none;
+  }
+}
+@media print {
+  .scroller {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toggle svg,
+  .row > td {
+    transition: none;
+  }
+}
+
+/* Folded columns show as second lines: the identifier under the number, the date
+   under the contractor. */
+.inlineIdentifier,
+.inlineDate {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The last cell: quick actions (on hover or focus) and the expand chevron. Fixed
+   width, so nothing moves when they appear. */
+.end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+}
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--dur-1) ease-out;
+}
+.row:hover .actions,
+.row:focus-within .actions,
+.actions:has(.tagOpen) {
+  opacity: 1;
+}
+.tagTrigger {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  color: var(--muted);
+}
+.tagTrigger:hover,
+.tagOpen {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+@media (hover: none) {
+  .actions {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,255 @@
+.tabs {
+  position: relative;
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+.slider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border-radius: 15px 15px 0 0;
+  background: var(--surface);
+  transform: translateX(calc(var(--index) * 100%));
+  transition: transform 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* Concave corners where the tab meets the panel. The outer one is hidden at the
+   sheet's edge, where the panel's own border takes over. */
+.slider::before,
+.slider::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  transition: opacity 200ms ease-out;
+}
+.slider::before {
+  left: -14px;
+  background: radial-gradient(circle at 0 0, transparent 13.5px, var(--surface) 14px);
+}
+.slider::after {
+  right: -14px;
+  background: radial-gradient(circle at 100% 0, transparent 13.5px, var(--surface) 14px);
+}
+.atStart .slider::before,
+.atEnd .slider::after {
+  opacity: 0;
+}
+.tab {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0 12px;
+  min-height: 64px;
+  padding: 8px var(--inset) 6px;
+  isolation: isolate;
+}
+/* Hovering the other register shows a rounded plate inside it, so the tab never
+   changes shape: only the selected tab touches the panel. */
+.tab::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 5px 5px 7px;
+  border-radius: 11px;
+  background: var(--track-hover);
+  opacity: 0;
+  transform: scale(0.98);
+  transition:
+    opacity 180ms ease-out,
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+.tab:not(.selected):hover::before {
+  opacity: 1;
+  transform: none;
+}
+/* The whole tab is the hit area; the button stretches over it. */
+.tabButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 18px;
+  text-align: left;
+  transition: color 200ms ease-out;
+}
+.tabButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.tabIcon {
+  flex: none;
+  color: var(--faint);
+  transition: color 200ms ease-out;
+}
+.selected .tabIcon {
+  color: var(--accent);
+}
+.tabButton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.tabButton:focus-visible {
+  outline: none;
+}
+.tabButton:focus-visible::after {
+  outline: 2px solid var(--focus);
+  outline-offset: -3px;
+}
+.selected .tabButton {
+  color: var(--accent);
+}
+.count {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.figures {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 2px;
+}
+.vatLabel {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+.vat {
+  color: var(--ink);
+  font-size: clamp(16px, 1.2vw + 10px, 24px);
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.selected .vat {
+  color: var(--accent);
+}
+/* The tab's VAT without the currency, for the folded phone line. */
+.vatShort {
+  display: none;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.selected .vatShort {
+  color: var(--accent);
+}
+.shortTitle {
+  display: none;
+}
+@media (max-width: 760px) {
+  .fullTitle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .shortTitle {
+    display: inline;
+  }
+  .slider {
+    border-radius: 12px 12px 0 0;
+  }
+  /* The sheet spans the screen: at its edge the tab is square, like the sheet. */
+  .atStart .slider {
+    border-top-left-radius: 0;
+  }
+  .atEnd .slider {
+    border-top-right-radius: 0;
+  }
+  .tab {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 8px var(--inset) 11px;
+  }
+  /* Name, then its VAT, then how many documents: the register reads first. */
+  .tabButton {
+    order: 0;
+    font-size: 13px;
+    line-height: 17px;
+  }
+  .figures {
+    order: 1;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .vat {
+    line-height: 20px;
+  }
+  .count {
+    order: 2;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .vatLabel {
+    font-size: 12px;
+  }
+  .vatKind {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slider,
+  .tab::before {
+    transition: none;
+  }
+}
+@media (max-width: 760px) {
+  [data-sheet][data-compact] .tab {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 6px;
+    padding-bottom: 0;
+  }
+  [data-sheet][data-compact] .count {
+    order: -1;
+    margin-top: 0;
+    grid-column: 1 / -1;
+  }
+  [data-sheet][data-compact] .tabButton,
+  [data-sheet][data-compact] .figures {
+    height: 40px;
+    margin-top: 0;
+    align-items: center;
+  }
+  [data-sheet][data-compact] .figures {
+    grid-column: auto;
+    justify-content: flex-end;
+  }
+  [data-sheet][data-compact] .vatLabel {
+    display: none;
+  }
+  [data-sheet][data-compact] .vat,
+  [data-sheet][data-compact] .tabIcon {
+    display: none;
+  }
+  [data-sheet][data-compact] .vatShort {
+    display: inline;
+  }
+}

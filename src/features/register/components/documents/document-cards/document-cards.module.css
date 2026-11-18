@@ -1,0 +1,199 @@
+/* Phone list: compact rows that open a bottom sheet. A press sinks the row slightly,
+   the way native lists answer a touch. */
+
+.list {
+  display: none;
+  border-top: 1px solid var(--line);
+}
+.month {
+  margin: 0;
+  padding: 14px var(--inset) 8px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-subtle);
+  font-size: 13px;
+  font-weight: 500;
+}
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 3px;
+  /* A taller neighbour in two columns stretches the row: the lines stay together. */
+  align-content: start;
+  padding: 12px calc(var(--inset) + 20px) 12px var(--inset);
+  scroll-margin-top: 200px;
+  transition:
+    background 160ms ease-out,
+    transform 160ms ease-out;
+}
+/* Dividers start at the text, the way native lists separate rows. */
+.card + .card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: calc(var(--inset) + 52px);
+  height: 1px;
+  background: var(--line);
+}
+.glyph {
+  grid-row: 1 / span 2;
+  align-self: start;
+  margin-top: 2px;
+}
+.card:has(.open:active) {
+  background: var(--row-hover);
+  transform: scale(0.99);
+}
+.active {
+  background: var(--row-open);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+/* Cards added by «Pokaż kolejne» rise into the list one after another. */
+.appended {
+  animation: cardIn 360ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  animation-delay: calc(min(var(--i), 8) * 35ms);
+}
+@keyframes cardIn {
+  from {
+    transform: translateY(14px);
+  }
+}
+/* The whole row is the button. */
+.open {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.open:focus-visible {
+  outline-offset: -3px;
+}
+.line {
+  grid-column: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+.gross {
+  flex: none;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.negative {
+  color: var(--warning);
+}
+.sub {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.date {
+  flex: none;
+}
+.status {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 550;
+}
+.status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.confirmed {
+  color: var(--accent);
+}
+.confirmed::before {
+  background: var(--accent);
+}
+.pending {
+  color: var(--warning);
+}
+.pending::before {
+  border: 1.5px dashed var(--pending);
+}
+.chevron {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--inset) - 2px);
+  margin-top: -8px;
+  color: var(--faint);
+}
+
+@media (max-width: 760px) {
+  .list {
+    display: block;
+  }
+}
+/* Wider phones and small tablets: two columns of rows. */
+@media (min-width: 560px) and (max-width: 760px) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .month {
+    grid-column: 1 / -1;
+  }
+  .card {
+    border-bottom: 1px solid var(--line);
+  }
+  .card + .card::before {
+    display: none;
+  }
+  /* Columns are counted within each month (see gridPlaces), so the divider stays in
+     the middle after a month with an odd number of documents. */
+  .card:not([data-end]) {
+    border-right: 1px solid var(--line);
+  }
+  /* Alone in its month's last row: the row's line runs on under the empty half. */
+  .card[data-lone]::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 100%;
+    width: calc(100% + 1px);
+    height: 1px;
+    background: var(--line);
+  }
+  /* The list's last row: the footer below draws the line. */
+  .card[data-final] {
+    border-bottom: 0;
+  }
+  .card[data-final]::after {
+    display: none;
+  }
+}
+/* A folded last month: its heading meets the footer's line. */
+.month:last-child {
+  border-bottom: 0;
+}
+@media print {
+  .list {
+    display: none !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+  .appended {
+    animation: none;
+  }
+}

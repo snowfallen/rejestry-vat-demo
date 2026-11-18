@@ -1,0 +1,247 @@
+/* The opened document. A white sheet rises out of the row; its amount lines arrive
+   one after another, the VAT share grows to scale and the KSeF seal settles last.
+   The KSeF steps beside it fill in order. */
+.details {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 1fr);
+  gap: 14px 28px;
+  padding: 16px var(--inset) 24px;
+  /* What lies under the paper; its perforation is cut in this colour. */
+  --paper-ground: var(--surface-subtle);
+  background: var(--paper-ground);
+}
+/* In the table the teal edge of the opened row continues down the details. */
+.inTable {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+/* On a phone sheet the details are the sheet's whole content, in one column. */
+.onSheet {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 0;
+  --paper-ground: var(--surface);
+  background: transparent;
+}
+.title {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+/* The sheet */
+.paper {
+  position: relative;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.9fr);
+  gap: 18px 28px;
+  padding: 20px 22px 18px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px var(--line),
+    var(--shadow-paper);
+  /* The paper comes out from under its row, like a print. */
+  transform: translateY(-12px);
+  transform-origin: 50% 0;
+}
+/* A perforated bottom edge, as if torn off a printer roll. */
+.paper::after {
+  content: '';
+  position: absolute;
+  right: 14px;
+  bottom: -5px;
+  left: 14px;
+  height: 10px;
+  background: radial-gradient(circle 4px at 7px 5px, var(--paper-ground) 96%, transparent) 0 0 /
+    14px 10px repeat-x;
+  pointer-events: none;
+}
+.open .paper {
+  transform: none;
+  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.kind {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 550;
+}
+.number {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 620;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.parties,
+.facts {
+  display: grid;
+  align-content: start;
+  gap: 12px 20px;
+  margin: 0;
+}
+.parties {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-column: 1 / -1;
+}
+.facts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.parties dt,
+.facts dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.parties dd,
+.facts dd {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 550;
+}
+.historyRow {
+  grid-column: 1 / -1;
+  margin: -4px 0 0;
+}
+.history {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 550;
+  text-align: left;
+  cursor: pointer;
+}
+.history svg {
+  flex-shrink: 0;
+  transition: transform var(--dur-1) ease-out;
+}
+.history:hover svg {
+  transform: translateX(2px);
+}
+.history:hover {
+  text-decoration: underline;
+}
+/* Phones: a full finger target. */
+@media (max-width: 760px) {
+  .history {
+    min-height: 44px;
+  }
+}
+/* The simulated KSeF check on a waiting sale: a quiet amber action in the step. */
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 2px -6px 0;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  /* A narrow step column (around 1024px) breaks the label rather than cutting it. */
+  text-align: left;
+  cursor: pointer;
+}
+.check:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px var(--warning-line);
+}
+.check:disabled {
+  cursor: progress;
+}
+/* A number KSeF has just given: it arrives instead of appearing. */
+.fresh {
+  animation: freshIn 420ms var(--ease-out) both;
+}
+@keyframes freshIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fresh {
+    animation: none;
+  }
+}
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: -2px -4px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+.copy svg {
+  color: var(--muted);
+}
+.copy:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+@media (max-width: 1180px) {
+  .paper {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .paper {
+    gap: 14px;
+    padding: 14px 14px 12px;
+  }
+  .head {
+    padding-bottom: 10px;
+  }
+  .parties,
+  .facts {
+    gap: 10px 14px;
+  }
+  .parties dd,
+  .facts dd {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .paper,
+  .open .paper {
+    transition: none;
+  }
+  .paper {
+    transform: none;
+  }
+}

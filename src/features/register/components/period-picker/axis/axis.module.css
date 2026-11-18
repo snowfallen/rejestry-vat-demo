@@ -1,0 +1,281 @@
+/* «Oś rozliczenia». Above the line: output VAT, its covered part pale (offset) and the
+   part to pay solid (due). Below: input VAT, and amber where it exceeds the output
+   (surplus). Colours are the --axis-* tokens; the phone's hero relights them. */
+.strip {
+  --bar-w: 20px;
+  /* Air above the tallest bar, inside the lens. The lens's amount shows only while it
+     is dragged, as a small badge over the bars, so it needs no room of its own. */
+  --cell-top: 12px;
+  /* Extra space at a quarter's outer edges. */
+  --q-gap: 8px;
+  position: relative;
+  /* Dragging across the months must not select their names or amounts. */
+  -webkit-user-select: none;
+  user-select: none;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 6px;
+  padding: 0 var(--inset) 4px 0;
+}
+.months {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+.item {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.quarterItem {
+  grid-column: span 3;
+  grid-template-columns: subgrid;
+}
+.item:disabled {
+  cursor: default;
+}
+.item:disabled .label {
+  color: var(--faint);
+}
+.item:focus-visible {
+  outline-offset: -2px;
+}
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--cell-top) 0 4px;
+}
+/* Quarters stand apart by a little extra space instead of dividing lines. */
+.quarterStart {
+  padding-left: var(--q-gap);
+}
+.quarterEnd {
+  padding-right: var(--q-gap);
+}
+.rise,
+.fall {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.rise {
+  justify-content: flex-end;
+  height: var(--rise);
+}
+.fall {
+  justify-content: flex-start;
+  height: var(--fall);
+}
+.up,
+.down {
+  display: flex;
+  flex-direction: column;
+  width: var(--bar-w);
+  max-width: 64%;
+  overflow: hidden;
+}
+.up {
+  border-radius: 5px 5px 0 0;
+  transform-origin: 50% 100%;
+  animation: grow 380ms var(--ease-out) backwards;
+  animation-delay: calc(var(--m) * 30ms);
+}
+.down {
+  border-radius: 0 0 5px 5px;
+  transform-origin: 50% 0;
+  animation: grow 320ms var(--ease-out) backwards;
+  animation-delay: calc(380ms + var(--m) * 30ms);
+}
+.due {
+  height: var(--due);
+  background: var(--axis-due);
+}
+/* Starts as output (solid) and is painted pale from the line up as input VAT covers it. */
+.offset {
+  height: var(--offset);
+  background: var(--axis-due) linear-gradient(var(--axis-offset), var(--axis-offset)) no-repeat
+    bottom / 100% 100%;
+  animation: offsetPaint 320ms var(--ease-out) backwards;
+  animation-delay: calc(380ms + var(--m) * 30ms);
+}
+.input {
+  height: var(--input);
+  background: var(--axis-input);
+}
+.surplus {
+  height: var(--surplus);
+  background: var(--axis-surplus);
+}
+.due,
+.offset,
+.input,
+.surplus {
+  flex: none;
+  transition:
+    height var(--dur-3) var(--ease-out),
+    background-color var(--dur-2) ease-out;
+}
+/* Inside the lens the other register's half steps back, so the chosen one reads. */
+.other {
+  opacity: 0.38;
+  transition: opacity var(--dur-2) ease-out;
+}
+.line {
+  height: 1px;
+  background: var(--control-line);
+}
+.emptyMonth .line {
+  height: 0;
+  border-top: 1px dashed var(--control-hover);
+  background: none;
+}
+.label {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1;
+  text-align: center;
+  transition: color var(--dur-2) ease-out;
+}
+.quarter {
+  height: 13px;
+  margin-top: 1px;
+  padding-left: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 13px;
+  white-space: nowrap;
+}
+.item:hover .label {
+  color: var(--ink);
+}
+/* Below 1100px the quarters read from their spacing alone. */
+@media (max-width: 1099px) {
+  .quarter {
+    display: none;
+  }
+}
+.inside .label {
+  color: var(--accent);
+  font-weight: 650;
+}
+.dimmed .due,
+.dimmed .offset,
+.dimmed .input,
+.dimmed .surplus {
+  background: var(--bar-muted);
+}
+.dragging,
+.dragging .item {
+  cursor: grabbing;
+  user-select: none;
+}
+@media (pointer: fine) {
+  .grab .inside {
+    cursor: grab;
+  }
+  .resizing,
+  .resizing .item {
+    cursor: ew-resize !important;
+  }
+}
+/* Phones: the axis inside the deep teal hero, relit in white. */
+@media (max-width: 760px) {
+  .strip {
+    --axis-due: var(--hero-ink);
+    --axis-offset: rgb(255 255 255 / 0.32);
+    --axis-input: rgb(255 255 255 / 0.18);
+    --axis-surplus: var(--pending);
+    --bar-w: 14px;
+    /* A little headroom so the lens wraps the tallest bar instead of touching it. */
+    --cell-top: 8px;
+    --q-gap: 3px;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 4px 8px 0;
+  }
+  .quarter {
+    display: none;
+  }
+  .rise {
+    height: var(--rise-h);
+  }
+  .fall {
+    height: var(--fall-h);
+  }
+  .due {
+    height: var(--due-h);
+  }
+  .offset {
+    height: var(--offset-h);
+  }
+  .input {
+    height: var(--input-h);
+  }
+  .surplus {
+    height: var(--surplus-h);
+  }
+
+  .line {
+    background: rgb(255 255 255 / 0.35);
+  }
+  .emptyMonth .line {
+    border-top-color: rgb(255 255 255 / 0.5);
+  }
+  .label {
+    margin-top: 5px;
+    color: var(--hero-muted);
+    font-size: 11px;
+  }
+  .item:hover .label,
+  .inside .label {
+    color: var(--hero-ink);
+  }
+  .dimmed .due,
+  .dimmed .offset,
+  .dimmed .input,
+  .dimmed .surplus {
+    background: rgb(255 255 255 / 0.18);
+  }
+}
+@media (max-width: 359px) {
+  .strip {
+    --bar-w: 11px;
+  }
+  .label {
+    font-size: 10px;
+    letter-spacing: -0.02em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .up,
+  .down,
+  .offset {
+    animation: none;
+  }
+  .due,
+  .offset,
+  .input,
+  .surplus {
+    transition: none;
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes offsetPaint {
+  from {
+    background-size: 100% 0%;
+  }
+}

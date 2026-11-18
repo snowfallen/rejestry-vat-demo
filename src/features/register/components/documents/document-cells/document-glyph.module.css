@@ -1,0 +1,49 @@
+/* The document's sign: its kind as a tinted tile, its KSeF state in the corner. */
+
+.glyph {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.glyphSales {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.glyphPurchases {
+  background: var(--track);
+  color: var(--muted);
+}
+.glyphCorrection {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+/* KSeF in the corner: a filled tick when confirmed, a dashed ring while waiting. */
+.badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+}
+.badgePending {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--pending);
+}
+
+.small {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+.small .badge {
+  width: 13px;
+  height: 13px;
+}

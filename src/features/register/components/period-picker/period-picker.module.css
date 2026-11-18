@@ -1,0 +1,150 @@
+/* The period card. Desktop: a white card, the summary at the left and the year's axis
+   at the right (≥1100), or the summary as one line above the axis (761–1099).
+   Phones: the screen's hero, a deep teal card that carries the VAT to pay. */
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'summary controls'
+    'axis axis'
+    'range range';
+  column-gap: 24px;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.controls {
+  grid-area: controls;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 12px var(--inset) 0 0;
+}
+.axis {
+  grid-area: axis;
+  min-width: 0;
+  /* Air between the mode switch and the lens, so the lens never touches it. */
+  padding: 10px 0 0 calc(var(--inset) - 6px);
+}
+/* Range: the dates as one pill that opens the exact-date dialog. */
+.range {
+  grid-area: range;
+}
+.rangeRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 0 var(--inset) 14px;
+}
+.rangePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--control-line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+.rangePill svg {
+  color: var(--accent);
+}
+.rangePill:hover {
+  border-color: var(--control-hover);
+}
+.rangeHint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+/* Narrow desktop: the summary takes the whole line, the switch goes under it. */
+@media (min-width: 761px) and (max-width: 899px) {
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'summary'
+      'controls'
+      'axis'
+      'range';
+  }
+  .controls {
+    justify-content: flex-start;
+    padding: 10px var(--inset) 0;
+  }
+}
+/* Wide desktop: summary column at the left, axis beside it. */
+@media (min-width: 1100px) {
+  .card {
+    grid-template-columns: 300px minmax(0, 1fr);
+    grid-template-areas:
+      'summary controls'
+      'summary axis'
+      'range range';
+    column-gap: 8px;
+  }
+  .axis {
+    padding-left: 0;
+  }
+}
+/* Phones: the hero card. The whole year fits its width, so nothing scrolls sideways. */
+@media (max-width: 760px) {
+  .card {
+    --seg-track: rgb(0 0 0 / 0.15);
+    --seg-thumb: var(--hero-ink);
+    --seg-ink: var(--hero-to);
+    --seg-muted: var(--hero-muted);
+    --seg-hover: var(--hero-ink);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'summary'
+      'axis'
+      'controls'
+      'range';
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 24px;
+    background: var(--hero-bg);
+    box-shadow: var(--shadow-hero);
+    color: var(--hero-ink);
+  }
+  .controls {
+    justify-content: stretch;
+    padding: 6px 12px 12px;
+  }
+  .modes {
+    width: 100%;
+  }
+  .axis {
+    padding-left: 0;
+  }
+  .rangeRow {
+    justify-content: center;
+    padding-bottom: 14px;
+  }
+  .rangePill {
+    border-color: rgb(255 255 255 / 0.3);
+    background: rgb(255 255 255 / 0.12);
+    color: var(--hero-ink);
+  }
+  .rangePill svg {
+    color: var(--hero-ink);
+  }
+  .rangeHint {
+    width: 100%;
+    color: var(--hero-muted);
+    text-align: center;
+  }
+}
+/* Phones: a compact hero, ≤ 300px, so the registers start on the first screen. */
+@media (max-width: 760px) {
+  .controls {
+    padding: 4px 12px 12px;
+  }
+}

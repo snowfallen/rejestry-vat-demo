@@ -1,0 +1,226 @@
+/* Filter popover (desktop) and sheet body (phone). Each criterion is a row of
+   choices with the number of documents it would show, so the result is visible
+   before choosing and the register behind the popover updates live. */
+.anchor {
+  position: relative;
+}
+.popover {
+  position: fixed;
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  max-width: calc(100vw - 32px);
+  padding: 14px 18px 14px;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  transform-origin: calc(100% - 40px) -8px;
+  animation: popoverIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.popoverLeaving {
+  animation: popoverOut 140ms ease-in forwards;
+}
+.popoverHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.popoverHeader h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -6px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+}
+.close:hover {
+  background: var(--surface-subtle);
+  color: var(--ink);
+}
+.groups {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* The scroller clips: a little room each side keeps hover and focus rings whole. */
+  margin-inline: -4px;
+  padding-inline: 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.group {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  align-items: start;
+  gap: 4px 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+}
+.group:first-child {
+  border-top: 0;
+  padding-top: 2px;
+}
+.groupHeading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding-top: 7px;
+  line-height: 1.35;
+}
+.groupLabel {
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--muted);
+}
+.groupLabel {
+  display: flex;
+  flex-direction: column;
+}
+.groupState {
+  color: var(--faint);
+  font-weight: 450;
+}
+/* Sorting has no count bubble at the end, so the chip closes as it opens.
+   Scoped to the list so it outranks the chip's own padding on every width. */
+.groups .sortChip {
+  padding-right: 12px;
+}
+.groupNote {
+  max-width: 128px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+.groupAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: -4px;
+  padding: 3px 4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 500;
+}
+.groupAction:hover {
+  background: var(--accent-soft);
+}
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.reset {
+  padding: 8px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+}
+.reset:disabled {
+  color: var(--faint);
+}
+.show {
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 13px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  transition: background 150ms ease-out;
+}
+.show:hover {
+  background: var(--accent-hover);
+}
+@media (max-width: 760px) {
+  .group {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 12px 0 14px;
+  }
+  .groupHeading {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0;
+  }
+  .groupLabel {
+    flex-direction: row;
+    gap: 6px;
+  }
+  .groupNote {
+    flex-basis: 100%;
+    max-width: none;
+  }
+  .groupState::before {
+    content: '· ';
+  }
+  .groupAction {
+    min-height: 32px;
+  }
+  .footer {
+    position: sticky;
+    bottom: -20px;
+    margin: 0 -20px -20px;
+    padding: 12px 20px 20px;
+    background: var(--surface);
+  }
+  /* The result button takes the whole width on one line; clearing sits centred
+     under it, as a quieter text action. */
+  .footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 4px;
+  }
+  .show {
+    min-height: 48px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .reset {
+    align-self: center;
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .popover,
+  .popoverLeaving {
+    animation-duration: 1ms;
+  }
+}
+@keyframes popoverIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+@keyframes popoverOut {
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}

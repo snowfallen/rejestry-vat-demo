@@ -1,0 +1,303 @@
+/* Summary: ‹ name ›, dates and deadline, the VAT to pay. */
+.summary {
+  grid-area: summary;
+  display: grid;
+  /* Sideways swipes step the period; vertical ones still scroll the page. */
+  touch-action: pan-y;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'nav settlement'
+    'meta settlement';
+  align-items: center;
+  column-gap: 20px;
+  min-width: 0;
+  padding: 14px 0 4px var(--inset);
+}
+.nav {
+  grid-area: nav;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  margin-left: -8px;
+}
+.title {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 620;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.title[data-long] {
+  font-size: 17px;
+  white-space: normal;
+  text-wrap: balance;
+}
+.meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.dates {
+  font-variant-numeric: tabular-nums;
+}
+.deadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.deadline svg {
+  color: var(--accent);
+}
+/* How soon the filing is due, the part people actually look for. */
+.countdown {
+  color: var(--accent);
+  font-weight: 600;
+}
+/* What holds that return back: quiet text with the amber of an unconfirmed document. */
+.missing {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: -2px -4px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.missing svg {
+  color: var(--muted);
+  transition: transform var(--dur-1) ease-out;
+}
+.missing:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.missing:hover svg {
+  transform: translateX(2px);
+}
+.missingDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pending);
+}
+.settlement {
+  grid-area: settlement;
+  display: grid;
+  justify-items: end;
+  margin: 0;
+}
+.settlementLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 550;
+}
+/* The same colour as the "due" part of the bars: this number is that part. */
+.swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--axis-due);
+}
+.settlementAmount {
+  color: var(--ink);
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.settlementChange {
+  color: var(--muted);
+  font-size: 12px;
+}
+@media (min-width: 761px) and (max-width: 899px) {
+  .summary {
+    padding-right: var(--inset);
+  }
+}
+@media (min-width: 1100px) {
+  .summary {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'nav'
+      'meta'
+      'settlement';
+    align-content: start;
+    padding: 14px 0 12px var(--inset);
+  }
+  .title {
+    font-size: 24px;
+  }
+  .title[data-long] {
+    font-size: 19px;
+  }
+  .meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-top: 4px;
+  }
+  .settlement {
+    justify-items: start;
+    margin-top: 14px;
+  }
+  .settlementLabel {
+    font-size: 13px;
+  }
+  .settlementAmount {
+    font-size: 34px;
+  }
+}
+@media (max-width: 760px) {
+  .summary {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'nav'
+      'meta'
+      'settlement';
+    justify-items: center;
+    padding: 10px 6px 0;
+  }
+  .nav {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    width: 100%;
+    margin-left: 0;
+  }
+  .title {
+    color: var(--hero-ink);
+    font-size: 18px;
+    text-align: center;
+  }
+  .title[data-long] {
+    font-size: 16px;
+  }
+  .nav button {
+    color: var(--hero-ink);
+  }
+  .nav button:hover:enabled {
+    background: rgb(255 255 255 / 0.12);
+  }
+  .nav button:disabled {
+    color: rgb(255 255 255 / 0.35);
+  }
+  .meta {
+    justify-content: center;
+    margin-top: 4px;
+    color: var(--hero-muted);
+    font-size: 12px;
+  }
+  .dates {
+    display: none;
+  }
+  .deadline {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    padding: 3px 9px 3px 7px;
+    border-radius: 14px;
+    background: rgb(255 255 255 / 0.12);
+    color: var(--hero-ink);
+    /* A quarter's deadline is longer («za październik»): on the narrowest phones it
+       breaks before the countdown instead of running past the card. */
+    white-space: normal;
+    text-align: center;
+  }
+  .countdown {
+    white-space: nowrap;
+  }
+  .deadline svg,
+  .countdown {
+    color: var(--hero-ink);
+  }
+  .missing,
+  .missing svg {
+    color: var(--hero-ink);
+  }
+  .missing {
+    min-height: 32px;
+  }
+  .settlement {
+    justify-items: center;
+    padding: 8px var(--inset) 4px;
+  }
+  .settlementLabel {
+    color: var(--hero-muted);
+  }
+  .swatch {
+    display: none;
+  }
+  .settlementAmount {
+    color: var(--hero-ink);
+    font-size: clamp(28px, 6vw + 6px, 34px);
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+  .settlementChange {
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    color: var(--hero-ink);
+    font-weight: 550;
+  }
+}
+@media (max-width: 760px) {
+  .summary {
+    padding: 2px 6px 0;
+  }
+  .nav {
+    min-height: 44px;
+  }
+  .meta {
+    margin-top: 0;
+    line-height: 18px;
+  }
+  .deadline {
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    font-size: 13px;
+  }
+  .settlement {
+    padding: 6px var(--inset) 0;
+  }
+  .settlementLabel {
+    font-size: 12px;
+    line-height: 15px;
+  }
+  .settlementAmount {
+    font-size: 30px;
+    line-height: 34px;
+  }
+  .settlementChange {
+    margin-top: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    font-size: 13px;
+    line-height: 18px;
+  }
+}

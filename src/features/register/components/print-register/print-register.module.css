@@ -1,0 +1,92 @@
+/* The register as printed: A4 landscape, black on white, page numbers in the margin. */
+
+.printContent {
+  display: none;
+}
+
+@page {
+  size: A4 landscape;
+  margin: 12mm;
+  @bottom-right {
+    content: 'Strona ' counter(page) ' z ' counter(pages);
+    color: #555;
+    font:
+      8pt Arial,
+      sans-serif;
+  }
+}
+
+@media print {
+  :global(html),
+  :global(body) {
+    background: #fff !important;
+  }
+  .printContent {
+    display: block;
+    color: #111;
+    font:
+      8.5pt/1.4 Arial,
+      sans-serif;
+  }
+  .head h1 {
+    margin: 0 0 2pt;
+    font-size: 15pt;
+  }
+  .head p {
+    margin: 0;
+  }
+  .meta {
+    color: #555;
+  }
+  .printContent table {
+    width: 100%;
+    margin-top: 10pt;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .printContent th,
+  .printContent td {
+    padding: 2.5pt 4pt;
+    border-bottom: 0.5pt solid #bbb;
+    text-align: left;
+    vertical-align: top;
+  }
+  .printContent thead th {
+    border-bottom: 1pt solid #111;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .printContent thead {
+    display: table-header-group;
+  }
+  .printContent tr {
+    break-inside: avoid;
+  }
+  .printContent small {
+    display: block;
+    color: #555;
+    font-size: 7.5pt;
+  }
+  .amount {
+    text-align: right !important;
+    white-space: nowrap;
+  }
+  .ksef {
+    word-break: break-all;
+  }
+  .summary {
+    break-inside: avoid;
+    width: 60%;
+    margin-top: 14pt;
+  }
+  .summary h2 {
+    margin: 0;
+    font-size: 10pt;
+  }
+  .summary tfoot th,
+  .summary tfoot td {
+    border-top: 1pt solid #111;
+    border-bottom: 0;
+    font-weight: 700;
+  }
+}
