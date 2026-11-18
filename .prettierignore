@@ -5,6 +5,8 @@ playwright-report
 test-results
 next-env.d.ts
 .pnpm-store
+# Vercel rewrites its own file before the build.
+vercel.json
 # Hidden folders hold tooling, not source; the root's documents are listed.
 .*/
 !.github/
