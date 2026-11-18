@@ -25,9 +25,10 @@ export function revealOpening(trigger: HTMLElement, region: HTMLElement, stickyA
 
 /**
  * A smooth scroll driven frame by frame. The browser's own smooth scroll stops when the
- * page's height changes under it, which is exactly what an opening region does.
+ * page's height changes under it, which is exactly what an opening region does, and
+ * WebKit also drops it when another element scrolls meanwhile (the month strip does).
  */
-function glide(by: number, duration = 320) {
+export function glide(by: number, duration = 320) {
   const from = scrollY;
   const start = performance.now();
   const ease = (t: number) => 1 - Math.pow(1 - t, 3);

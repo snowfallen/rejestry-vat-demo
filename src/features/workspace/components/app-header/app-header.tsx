@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { ChevronDown, CircleHelp, ReceiptText } from 'lucide-react';
 import { IconButton } from '@/components/ui/button';
 import { cx } from '@/lib/cx';
+import { glide } from '@/lib/reveal';
 import { Avatar } from '@/components/ui/avatar';
 import { prefersReducedMotion } from '@/hooks/use-media-query';
 import { NotificationsMenu, type Notice, type NoticeAction } from './notifications-menu';
@@ -93,9 +94,7 @@ export function AppHeader({
             aria-hidden={!shown}
             tabIndex={shown ? 0 : -1}
             title={headerCopy.backToTop}
-            onClick={() =>
-              scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
-            }
+            onClick={() => (prefersReducedMotion() ? scrollTo({ top: 0 }) : glide(-scrollY, 480))}
             className={cx(
               'col-start-1 row-start-1 m-0 min-w-0 border-0 bg-transparent p-0 text-left font-[inherit]',
               'transition-[transform,visibility] duration-300 ease-out',
