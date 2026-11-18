@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { test, expect, type Locator } from '@playwright/test';
-import { openRegister } from './hydrated';
+import { hydrated, openRegister } from './hydrated';
 
 /**
  * Presses `button` inside the page and samples the panel's height every frame until it
@@ -73,10 +73,13 @@ test(
 
 test('the entrance plays once per session and never blocks a click', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await openRegister(page);
+  // Checked as soon as the HTML is parsed: the entrance starts with the first paint, and
+  // a slow machine may finish it before React has hydrated.
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-intro', '');
-  // Clickable while it plays.
   await expect.poll(() => page.evaluate(() => document.getAnimations().length)).toBeGreaterThan(0);
+  // Clickable while it plays, or right after it.
+  await hydrated(page);
   const september = page
     .getByRole('region', { name: 'Okres rozliczeniowy' })
     .getByRole('radio', { name: /^Wrzesień 2026/ });

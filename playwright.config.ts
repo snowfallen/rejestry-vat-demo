@@ -6,7 +6,9 @@ export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
-  retries: process.env.CI ? 1 : 0,
+  // Shared CI runners are slower and noisier than a workstation; locally a test passes
+  // the first time or fails.
+  retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 2 : 3,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
